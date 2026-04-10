@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Chase – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & VARS ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#0066CC;--blue-dark:#0050A0;--green:#2A7D2E;
+  --navy:#1B2A4A;--red:#C0392B;--border:#DDD;
+  --text:#111;--text-mid:#444;--text-light:#888;
+  --bg:#F5F5F5;--card:#fff;--nav-bg:#fff;
+}
+body.dark{
+  --text:#F0F0F0;--text-mid:#bbb;--text-light:#888;
+  --bg:#0d0d0d;--card:#1a1a1a;--nav-bg:#111;--border:#333;--navy:#0a1628;
+}
+body{font-family:'Roboto',sans-serif;color:var(--text);background:var(--bg);max-width:430px;margin:0 auto;min-height:100vh;opacity:0;animation:fi .5s ease forwards;transition:background .3s,color .3s}
+@keyframes fi{to{opacity:1}}
+
+/* ── TOP NAV ── */
+.top-nav{background:var(--nav-bg);border-bottom:1px solid var(--border);padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;transition:background .3s}
+.hamburger{font-size:22px;color:var(--text);cursor:pointer;background:none;border:none;padding:4px}
+.chase-logo{display:flex;align-items:center;gap:6px;text-decoration:none}
+.chase-wordmark{font-size:22px;font-weight:700;color:var(--text);letter-spacing:.5px}
+.oct{width:26px;height:26px;background:var(--blue);clip-path:polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%);display:flex;align-items:center;justify-content:center}
+.oct-i{width:14px;height:14px;background:white;clip-path:polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%);display:flex;align-items:center;justify-content:center}
+.oct-c{width:8px;height:8px;background:var(--blue);clip-path:polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%)}
+.logout-btn{background:none;border:1.5px solid var(--border);color:var(--text-mid);padding:7px 14px;border-radius:4px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* ── WELCOME BAR ── */
+.welcome-bar{background:var(--navy);color:white;padding:14px 18px;display:flex;align-items:center;justify-content:space-between}
+.welcome-bar .wname{font-size:14px;font-weight:500}
+.welcome-bar .wsession{font-size:11px;opacity:.6;margin-top:2px}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0}
+
+/* ── PAGES ── */
+.page{display:none;padding-bottom:80px}
+.page.active{display:block}
+
+/* ── BALANCE CARD ── */
+.balance-card{background:linear-gradient(135deg,#0055AA,#0077CC);color:white;padding:22px 18px 18px;margin:14px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.bal-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.75;margin-bottom:4px}
+.bal-amount{font-size:36px;font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.up-badge{background:rgba(46,200,100,.25);color:#7fffaa;font-size:11px;font-weight:700;padding:3px 8px;border-radius:12px}
+.bal-note{font-size:11px;opacity:.6}
+
+/* ── QUICK ACTIONS ── */
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border-top:1px solid var(--border);margin:0 14px;border-radius:0 0 8px 8px;box-shadow:0 2px 6px rgba(0,0,0,.07)}
+.qa-item{display:flex;flex-direction:column;align-items:center;padding:14px 4px 12px;cursor:pointer;border-right:1px solid var(--border);gap:6px;transition:background .12s}
+.qa-item:last-child{border-right:none}
+.qa-item:hover{background:var(--bg)}
+.qa-circle{width:38px;height:38px;border-radius:50%;background:#E8F1FB;display:flex;align-items:center;justify-content:center;font-size:16px}
+.qa-label{font-size:9.5px;color:var(--blue);font-weight:500;text-align:center;line-height:1.2}
+
+/* ── SECTION TITLE ── */
+.sec-title{font-size:13px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:.5px;padding:18px 18px 8px}
+
+/* ── ACCOUNT ROWS ── */
+.acct-row{background:var(--card);margin:0 14px 10px;border-radius:6px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.acct-row-hd{background:var(--bg);padding:10px 16px;font-size:11px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+.acct-row-bd{padding:14px 16px;display:flex;justify-content:space-between;align-items:flex-end}
+.acct-name{font-size:14px;font-weight:600;margin-bottom:3px}
+.acct-num{font-size:12px;color:var(--text-light)}
+.acct-bal{font-size:20px;font-weight:700}
+.acct-tag{display:inline-block;background:#e6f5ec;color:var(--green);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:6px;text-transform:uppercase}
+
+/* ── TXN CARD ── */
+.txn-card{background:var(--card);margin:0 14px 14px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden}
+.txn-card-hd{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.txn-card-hd h4{font-size:14px;font-weight:700}
+.txn-card-hd a{color:var(--blue);font-size:12.5px;text-decoration:none}
+.txn-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px;cursor:pointer;transition:background .12s}
+.txn-row:hover{background:var(--bg)}
+.txn-row:last-child{border-bottom:none}
+.txn-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.txn-dot.dep{background:#e6f5ec}.txn-dot.wd{background:#fff0f0}.txn-dot.tr{background:#fff8e0}
+.txn-dot.bl{background:#eef2ff}.txn-dot.zl{background:#f3eeff}.txn-dot.atm{background:#fff5e6}
+.txn-info{flex:1}
+.txn-info .tname{font-size:13px;font-weight:600;color:var(--text)}
+.txn-info .tdate{font-size:11px;color:var(--text-light);margin-top:2px}
+.txn-right{text-align:right}
+.txn-right .amt{font-size:13.5px;font-weight:700}
+.txn-right .amt.pos{color:var(--green)}.txn-right .amt.neg{color:var(--red)}
+.txn-right .st{font-size:10px;font-weight:600;margin-top:3px;padding:2px 7px;border-radius:10px;display:inline-block;text-transform:uppercase}
+.txn-right .st.done{background:#e6f5ec;color:#1a8a4a}
+.txn-right .st.pend{background:#fff8e0;color:#996600}
+
+/* ── INFO CARD ── */
+.info-card{background:var(--card);margin:0 14px 14px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden}
+.info-card-hd{background:var(--navy);color:white;padding:14px 18px;font-size:15px;font-weight:700}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1px solid var(--border)}
+.info-row:last-child{border-bottom:none}
+.info-label{font-size:13px;color:var(--text-light)}
+.info-value{font-size:13.5px;font-weight:600;color:var(--text);text-align:right}
+
+/* ── CREDIT CARD VISUAL ── */
+.cc-visual{background:linear-gradient(135deg,#1B2A4A,#0066CC);border-radius:14px;margin:14px;padding:22px 22px 18px;color:white;box-shadow:0 4px 16px rgba(0,0,0,.2);position:relative;overflow:hidden}
+.cc-visual::before{content:'';position:absolute;top:-30px;right:-30px;width:160px;height:160px;background:rgba(255,255,255,.06);border-radius:50%}
+.cc-chip{width:34px;height:26px;background:linear-gradient(135deg,#d4af37,#f5d060);border-radius:4px;margin-bottom:20px}
+.cc-number{font-size:18px;letter-spacing:3px;margin-bottom:14px;font-family:monospace}
+.cc-bottom{display:flex;justify-content:space-between;align-items:flex-end}
+.cc-name{font-size:13px;text-transform:uppercase;letter-spacing:1px;opacity:.9}
+.cc-type{font-size:11px;opacity:.7;margin-top:2px}
+.cc-network{font-size:24px;letter-spacing:-4px}
+
+/* ── STOCK ROW ── */
+.stock-row{display:flex;align-items:center;padding:13px 18px;border-bottom:1px solid var(--border);gap:12px}
+.stock-row:last-child{border-bottom:none}
+.stock-ticker{width:44px;height:44px;border-radius:10px;background:var(--blue);color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;letter-spacing:.5px}
+.stock-info{flex:1}
+.stock-name{font-size:13px;font-weight:600;color:var(--text)}
+.stock-shares{font-size:11px;color:var(--text-light);margin-top:2px}
+.stock-right{text-align:right}
+.stock-val{font-size:14px;font-weight:700;color:var(--text)}
+.stock-chg{font-size:11px;font-weight:600;margin-top:2px}
+.stock-chg.up{color:var(--green)}.stock-chg.dn{color:var(--red)}
+
+/* ── PROFILE ── */
+.profile-avatar-wrap{display:flex;flex-direction:column;align-items:center;padding:28px 0 18px;background:var(--card);margin:14px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.profile-avatar-big{width:72px;height:72px;border-radius:50%;background:var(--blue);color:white;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;margin-bottom:10px}
+.profile-name{font-size:18px;font-weight:700;color:var(--text)}
+.profile-email{font-size:13px;color:var(--text-light);margin-top:4px}
+
+/* TOGGLE */
+.toggle-row{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--border);background:var(--card)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-label{font-size:15px;color:var(--text)}
+.toggle-switch{position:relative;width:48px;height:26px}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:#ccc;border-radius:26px;transition:.3s;cursor:pointer}
+.toggle-slider::before{content:'';position:absolute;width:20px;height:20px;left:3px;top:3px;background:white;border-radius:50%;transition:.3s}
+input:checked+.toggle-slider{background:var(--blue)}
+input:checked+.toggle-slider::before{transform:translateX(22px)}
+
+/* ── MORE PAGE ── */
+.more-item{display:flex;align-items:center;gap:14px;padding:16px 18px;background:var(--card);border-bottom:1px solid var(--border);cursor:pointer;text-decoration:none;transition:background .12s}
+.more-item:hover{background:var(--bg)}
+.more-icon{width:38px;height:38px;border-radius:50%;background:#E8F1FB;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.more-text{flex:1}
+.more-title{font-size:14px;font-weight:600;color:var(--text)}
+.more-sub{font-size:12px;color:var(--text-light);margin-top:2px}
+.more-chev{color:var(--text-light);font-size:14px}
+
+/* ── HOLD MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:var(--card);width:100%;max-width:430px;border-radius:16px 16px 0 0;padding:0 0 36px;animation:su .3s ease}
+@keyframes su{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-handle{width:36px;height:4px;background:#ddd;border-radius:2px;margin:12px auto 0}
+.modal-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:17px;font-weight:700;color:var(--text)}
+.modal-close{background:#f0f0f0;border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#555}
+.modal-amt-row{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal-amt-label{font-size:13px;color:var(--text-mid)}
+.modal-amt-val{font-size:16px;font-weight:700;color:var(--text)}
+.hold-notice{margin:18px 20px 0;background:#FFF8E1;border:1.5px solid #FFD600;border-left:5px solid #F9A825;border-radius:6px;padding:16px 14px}
+.hold-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.hold-icon{font-size:22px}
+.hold-title{font-size:15px;font-weight:700;color:#7a5200}
+.hold-body{font-size:13.5px;color:#5a3e00;line-height:1.6}
+.hold-body strong{color:#3a2800}
+.hold-ref{margin-top:10px;font-size:11.5px;color:#888;border-top:1px solid #ffe082;padding-top:8px}
+.modal-actions{padding:18px 20px 0}
+.btn-dismiss{width:100%;background:#f0f0f0;color:var(--text-mid);border:none;padding:13px;border-radius:6px;font-size:15px;font-weight:500;cursor:pointer;font-family:inherit}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--nav-bg);border-top:1px solid var(--border);display:flex;padding:8px 0 12px;z-index:100;transition:background .3s}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--text-light);font-size:10px;padding:4px 0;transition:color .15s}
+.bn-item.active{color:var(--blue)}
+.bn-icon{font-size:20px}
+
+/* ── MENU DRAWER ── */
+.menu-overlay{display:none;position:fixed;inset:0;z-index:200}
+.menu-overlay.open{display:block}
+.menu-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.menu-drawer{position:absolute;top:0;left:0;bottom:0;width:85%;max-width:320px;background:var(--card);overflow-y:auto;padding-bottom:40px;transition:background .3s}
+.menu-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+.menu-close{width:32px;height:32px;border:1.5px solid #888;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#555}
+.menu-link{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);font-size:15px;color:var(--text);text-decoration:none;cursor:pointer;transition:background .12s}
+.menu-link:hover{background:var(--bg)}
+.menu-chev{color:var(--text-light);font-size:14px}
+.menu-logout{display:block;width:calc(100% - 36px);margin:20px 18px 0;background:none;border:1.5px solid var(--red);color:var(--red);padding:13px;border-radius:4px;font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;text-align:center}
+
+/* ── UTILS ── */
+.divider-line{height:8px;background:var(--bg)}
+.page-hd{font-size:20px;font-weight:700;padding:18px 18px 10px;color:var(--text)}
+.summary-chip{display:inline-flex;align-items:center;gap:6px;background:#e8f1fb;color:var(--blue);font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;margin:0 14px 14px}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="top-nav">
+  <button class="hamburger" onclick="openMenu()">☰</button>
+  <a class="chase-logo" href="#" onclick="showPage('home');return false">
+    <span class="chase-wordmark">CHASE</span>
+    <div class="oct"><div class="oct-i"><div class="oct-c"></div></div></div>
+  </a>
+  <form method="POST" action="/logout" style="margin:0">
+    <button type="submit" class="logout-btn">Sign out</button>
+  </form>
+</div>
+
+<!-- WELCOME BAR -->
+<div class="welcome-bar">
+  <div>
+    <div class="wname" id="welcomeName">Welcome back</div>
+    <div class="wsession">Secure session · Active</div>
+  </div>
+  <div class="avatar" id="welcomeAvatar">--</div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!--  PAGE: HOME                           -->
+<!-- ══════════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="balance-card">
+    <div class="bal-label">Total Balance</div>
+    <div class="bal-amount"><span id="totalBal">--</span><span class="up-badge">▲ +2.4%</span></div>
+    <div class="bal-note">All accounts · Updated just now</div>
+  </div>
+  <div class="quick-actions">
+    <div class="qa-item" onclick="showWithdrawModal('Transfer')"><div class="qa-circle">↕</div><div class="qa-label">Transfer</div></div>
+    <div class="qa-item" onclick="showWithdrawModal('Pay Bills')"><div class="qa-circle">📄</div><div class="qa-label">Pay Bills</div></div>
+    <div class="qa-item" onclick="showWithdrawModal('Deposit Check')"><div class="qa-circle">📷</div><div class="qa-label">Deposit Check</div></div>
+    <div class="qa-item" onclick="showWithdrawModal('Zelle® Send')"><div class="qa-circle">⚡</div><div class="qa-label">Zelle® Send</div></div>
+  </div>
+  <div class="sec-title">My Accounts</div>
+  <div class="acct-row">
+    <div class="acct-row-hd">Checking</div>
+    <div class="acct-row-bd">
+      <div><div class="acct-name">Chase Total Checking®</div><div class="acct-num" id="h-chkNum">----</div><div class="acct-tag">✔ Active</div></div>
+      <div class="acct-bal" id="h-chkBal">--</div>
+    </div>
+  </div>
+  <div class="acct-row">
+    <div class="acct-row-hd">Savings</div>
+    <div class="acct-row-bd">
+      <div><div class="acct-name">Chase Savings℠</div><div class="acct-num" id="h-savNum">----</div><div class="acct-tag">✔ Active</div></div>
+      <div class="acct-bal" id="h-savBal">--</div>
+    </div>
+  </div>
+  <div class="sec-title">Recent Transactions</div>
+  <div class="txn-card"><div class="txn-card-hd"><h4>Transaction History</h4><a href="#" onclick="showPage('statements');return false">View all →</a></div><div id="home-txns"></div></div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!--  PAGE: ACCOUNTS                       -->
+<!-- ══════════════════════════════════════ -->
+<div class="page" id="page-accounts">
+  <div class="page-hd">Account Information</div>
+
+  <!-- Checking detail -->
+  <div class="info-card">
+    <div class="info-card-hd">Chase Total Checking®</div>
+    <div class="info-row"><span class="info-label">Account Number</span><span class="info-value" id="a-chkNum">----</span></div>
+    <div class="info-row"><span class="info-label">Routing Number</span><span class="info-value" id="a-chkRoute">----</span></div>
+    <div class="info-row"><span class="info-label">Available Balance</span><span class="info-value" id="a-chkBal" style="color:var(--green)">--</span></div>
+    <div class="info-row"><span class="info-label">Account Type</span><span class="info-value">Personal Checking</span></div>
+    <div class="info-row"><span class="info-label">Status</span><span class="info-value" style="color:var(--green)">✔ Active</span></div>
+    <div class="info-row"><span class="info-label">Interest Rate</span><span class="info-value">0.01% APY</span></div>
+  </div>
+
+  <!-- Savings detail -->
+  <div class="info-card">
+    <div class="info-card-hd">Chase Savings℠</div>
+    <div class="info-row"><span class="info-label">Account Number</span><span class="info-value" id="a-savNum">----</span></div>
+    <div class="info-row"><span class="info-label">Routing Number</span><span class="info-value" id="a-savRoute">----</span></div>
+    <div class="info-row"><span class="info-label">Available Balance</span><span class="info-value" id="a-savBal" style="color:var(--green)">--</span></div>
+    <div class="info-row"><span class="info-label">Account Type</span><span class="info-value">Personal Savings</span></div>
+    <div class="info-row"><span class="info-label">Status</span><span class="info-value" style="color:var(--green)">✔ Active</span></div>
+    <div class="info-row"><span class="info-label">Interest Rate</span><span class="info-value">4.50% APY</span></div>
+  </div>
+
+  <!-- Member info -->
+  <div class="info-card">
+    <div class="info-card-hd">Account Holder</div>
+    <div class="info-row"><span class="info-label">Full Name</span><span class="info-value" id="a-name">--</span></div>
+    <div class="info-row"><span class="info-label">Email</span><span class="info-value" id="a-email">--</span></div>
+    <div class="info-row"><span class="info-label">Phone</span><span class="info-value" id="a-phone">--</span></div>
+    <div class="info-row"><span class="info-label">Address</span><span class="info-value" id="a-addr" style="max-width:55%;word-break:break-word">--</span></div>
+    <div class="info-row"><span class="info-label">Member Since</span><span class="info-value" id="a-since">--</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!--  PAGE: STATEMENTS            
