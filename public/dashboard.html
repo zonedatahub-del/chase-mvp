@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Chase – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & VARS ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#0066CC;--blue-dark:#0050A0;--green:#2A7D2E;
+  --navy:#1B2A4A;--text:#111;--text-mid:#444;--text-light:#888;
+  --border:#DDD;--bg:#F5F5F5;--card:#FFF;--red:#C0392B;
+  --gold:#C9982A;
+}
+body{font-family:'Roboto',sans-serif;color:var(--text);background:var(--bg);
+  max-width:430px;margin:0 auto;min-height:100vh;
+  opacity:0;animation:fadeIn .5s ease forwards;transition:background .3s,color .3s}
+@keyframes fadeIn{to{opacity:1}}
+
+/* ── DARK MODE ── */
+body.dark{--text:#F0F0F0;--text-mid:#BBB;--text-light:#888;--border:#333;
+  --bg:#0D0D0D;--card:#1A1A1A;--navy:#0A0A1A}
+body.dark .top-nav,body.dark .bottom-nav{background:#111;border-color:#333}
+body.dark .welcome-bar{background:#0A0A1A}
+body.dark .account-row,body.dark .txn-card,body.dark .page-card,
+body.dark .quick-actions,body.dark .invest-row,body.dark .more-item{background:#1A1A1A;border-color:#333}
+body.dark .account-row-header{background:#222}
+body.dark .qa-circle{background:#1E3A5A}
+body.dark .menu-drawer{background:#111}
+body.dark .modal-sheet{background:#1A1A1A}
+body.dark .hold-notice{background:#2A1F00;border-color:#8a6000}
+body.dark input{background:#222;color:#eee;border-color:#444}
+body.dark .section-title{color:#aaa}
+body.dark .chase-wordmark{color:#eee}
+body.dark .btn-modal-cancel{background:#333;color:#ccc}
+body.dark .more-divider{color:#555}
+
+/* ── NAV ── */
+.top-nav{background:white;border-bottom:1px solid var(--border);padding:0 16px;height:52px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;transition:background .3s}
+.hamburger{font-size:22px;color:#333;cursor:pointer;background:none;border:none;padding:4px}
+body.dark .hamburger{color:#ccc}
+.chase-logo{display:flex;align-items:center;gap:6px;text-decoration:none}
+.chase-wordmark{font-size:22px;font-weight:700;color:var(--text);letter-spacing:.5px}
+.chase-octagon{width:26px;height:26px;background:var(--blue);
+  clip-path:polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%);
+  display:flex;align-items:center;justify-content:center}
+.chase-octagon-inner{width:14px;height:14px;background:white;
+  clip-path:polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%);
+  display:flex;align-items:center;justify-content:center}
+.chase-octagon-core{width:8px;height:8px;background:var(--blue);
+  clip-path:polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%)}
+.logout-btn{background:none;border:1.5px solid var(--border);color:var(--text-mid);
+  padding:7px 14px;border-radius:4px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* ── WELCOME ── */
+.welcome-bar{background:var(--navy);color:white;padding:14px 18px;
+  display:flex;align-items:center;justify-content:space-between;transition:background .3s}
+.welcome-bar .uname{font-size:14px;font-weight:500}
+.welcome-bar .session{font-size:11px;opacity:.6;margin-top:2px}
+.welcome-bar .avatar{width:36px;height:36px;border-radius:50%;background:var(--blue);
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white}
+
+/* ── PAGE SYSTEM ── */
+.page{display:none;animation:fadeIn .3s ease}
+.page.active{display:block}
+.page-pad{padding-bottom:80px}
+
+/* ── BALANCE CARD ── */
+.balance-card{background:linear-gradient(135deg,#0055AA,#0077CC);color:white;
+  padding:22px 18px 18px;margin:14px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.balance-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.75;margin-bottom:4px}
+.balance-amount{font-size:36px;font-weight:700;display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.up-badge{background:rgba(46,200,100,.25);color:#7fffaa;font-size:11px;font-weight:700;padding:3px 8px;border-radius:12px}
+.balance-note{font-size:11px;opacity:.6}
+
+/* ── QUICK ACTIONS ── */
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);
+  border-top:1px solid #eee;margin:0 14px;border-radius:0 0 8px 8px;
+  box-shadow:0 2px 6px rgba(0,0,0,.07);transition:background .3s}
+.qa-item{display:flex;flex-direction:column;align-items:center;padding:14px 4px 12px;
+  cursor:pointer;border-right:1px solid var(--border);gap:6px}
+.qa-item:last-child{border-right:none}
+.qa-circle{width:38px;height:38px;border-radius:50%;background:#E8F1FB;
+  display:flex;align-items:center;justify-content:center;font-size:16px;transition:background .3s}
+.qa-label{font-size:9.5px;color:var(--blue);font-weight:500;text-align:center;line-height:1.2}
+
+/* ── SECTION TITLE ── */
+.section-title{font-size:13px;font-weight:700;color:var(--text-mid);
+  text-transform:uppercase;letter-spacing:.5px;padding:18px 18px 8px;transition:color .3s}
+
+/* ── ACCOUNT ROW ── */
+.account-row{background:var(--card);margin:0 14px 10px;border-radius:6px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);transition:background .3s}
+.account-row-header{background:#f8f9fc;padding:10px 16px;font-size:11px;font-weight:700;
+  color:#555;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);transition:background .3s}
+.account-row-body{padding:14px 16px;display:flex;justify-content:space-between;align-items:flex-end}
+.account-name{font-size:14px;font-weight:600;margin-bottom:3px}
+.account-num{font-size:12px;color:var(--text-light)}
+.account-balance{font-size:20px;font-weight:700}
+.account-tag{display:inline-block;background:#e6f5ec;color:var(--green);
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-top:6px;text-transform:uppercase}
+
+/* ── TXN LIST ── */
+.txn-card{background:var(--card);margin:0 14px 14px;border-radius:6px;
+  box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden;transition:background .3s}
+.txn-card-header{padding:12px 16px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center}
+.txn-card-header h4{font-size:14px;font-weight:700}
+.txn-card-header a{color:var(--blue);font-size:12.5px;text-decoration:none}
+.txn-row{display:flex;align-items:center;padding:12px 16px;
+  border-bottom:1px solid #f0f0f0;gap:12px;cursor:pointer;transition:background .12s}
+.txn-row:hover{background:#fafafa}
+body.dark .txn-row:hover{background:#222}
+.txn-row:last-child{border-bottom:none}
+.txn-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.txn-dot.dep{background:#e6f5ec}.txn-dot.wd{background:#fff0f0}
+.txn-dot.tr{background:#fff8e0}.txn-dot.bl{background:#eef2ff}
+.txn-dot.zl{background:#f3eeff}.txn-dot.atm{background:#fff5e6}
+.txn-info{flex:1}
+.txn-info .tname{font-size:13px;font-weight:600}
+.txn-info .tdate{font-size:11px;color:var(--text-light);margin-top:2px}
+.txn-right{text-align:right}
+.txn-right .amount{font-size:13.5px;font-weight:700}
+.txn-right .amount.pos{color:var(--green)}.txn-right .amount.neg{color:var(--red)}
+.txn-right .status{font-size:10px;font-weight:600;margin-top:3px;padding:2px 7px;
+  border-radius:10px;display:inline-block;text-transform:uppercase}
+.txn-right .status.done{background:#e6f5ec;color:#1a8a4a}
+
+/* ── PAGE CARD ── */
+.page-card{background:var(--card);margin:14px;border-radius:10px;
+  box-shadow:0 1px 6px rgba(0,0,0,.09);overflow:hidden;transition:background .3s}
+.page-card-header{background:var(--blue);color:white;padding:16px 18px;font-size:16px;font-weight:700}
+.page-card-header.navy{background:var(--navy)}
+.page-card-header.gold{background:linear-gradient(135deg,#8B6914,#C9982A)}
+.info-row{display:flex;justify-content:space-between;align-items:center;
+  padding:13px 18px;border-bottom:1px solid var(--border)}
+.info-row:last-child{border-bottom:none}
+.info-label{font-size:12px;color:var(--text-light);margin-bottom:3px}
+.info-value{font-size:14px;font-weight:600;color:var(--text)}
+
+/* ── CREDIT CARD VISUAL ── */
+.cc-visual{margin:18px 14px;border-radius:14px;padding:22px 22px 18px;
+  background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
+  color:white;box-shadow:0 6px 24px rgba(0,0,0,.3);position:relative;overflow:hidden;min-height:180px}
+.cc-visual.mastercard-bg{background:linear-gradient(135deg,#1a1a1a,#333,#1a1a1a)}
+.cc-chip{width:40px;height:30px;background:linear-gradient(135deg,#d4a843,#f0c060);
+  border-radius:5px;margin-bottom:20px;display:grid;place-items:center}
+.cc-chip-inner{width:26px;height:20px;border:1.5px solid rgba(0,0,0,.3);border-radius:3px;
+  display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:3px}
+.cc-chip-inner div{background:rgba(0,0,0,.2);border-radius:1px}
+.cc-number{font-size:17px;font-weight:500;letter-spacing:3px;margin-bottom:18px;font-family:monospace}
+.cc-bottom{display:flex;justify-content:space-between;align-items:flex-end}
+.cc-label{font-size:9px;opacity:.6;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.cc-val{font-size:13px;font-weight:600}
+.cc-network{position:absolute;bottom:18px;right:20px}
+.mc-circles{display:flex;position:relative;width:50px;height:30px}
+.mc-left{width:30px;height:30px;border-radius:50%;background:#EB001B;opacity:.9;position:absolute;left:0}
+.mc-right{width:30px;height:30px;border-radius:50%;background:#F79E1B;opacity:.9;position:absolute;right:0}
+.cc-shine{position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(ellipse at 60% 40%,rgba(255,255,255,.08) 0%,transparent 60%)}
+
+/* ── INVEST ── */
+.invest-row{background:var(--card);margin:0 14px 8px;border-radius:8px;
+  padding:14px 16px;display:flex;align-items:center;gap:14px;
+  box-shadow:0 1px 4px rgba(0,0,0,.07);transition:background .3s}
+.invest-ticker{width:44px;height:44px;border-radius:10px;background:#E8F1FB;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--blue);flex-shrink:0}
+.invest-info{flex:1}
+.invest-name{font-size:13px;font-weight:600}
+.invest-shares{font-size:11px;color:var(--text-light);margin-top:2px}
+.invest-right{text-align:right}
+.invest-value{font-size:14px;font-weight:700}
+.invest-change{font-size:11px;margin-top:2px}
+.invest-change.up{color:var(--green)}.invest-change.dn{color:var(--red)}
+.invest-total-card{background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:white;margin:14px;border-radius:10px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.invest-total-label{font-size:11px;opacity:.7;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.invest-total-val{font-size:32px;font-weight:700}
+.invest-total-sub{font-size:12px;opacity:.6;margin-top:4px}
+
+/* ── PROFILE ── */
+.profile-avatar-big{width:72px;height:72px;border-radius:50%;background:var(--blue);
+  display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;
+  color:white;margin:24px auto 10px}
+.profile-name-big{text-align:center;font-size:18px;font-weight:700;margin-bottom:4px}
+.profile-since{text-align:center;font-size:12px;color:var(--text-light);margin-bottom:20px}
+.toggle-row{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border)}
+.toggle-label{font-size:14px;font-weight:500}
+.toggle-sub{font-size:11px;color:var(--text-light);margin-top:2px}
+.toggle-switch{position:relative;width:48px;height:26px;cursor:pointer}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:#ccc;border-radius:13px;transition:.3s}
+.toggle-slider::before{content:'';position:absolute;width:20px;height:20px;left:3px;bottom:3px;
+  background:white;border-radius:50%;transition:.3s}
+.toggle-switch input:checked+.toggle-slider{background:var(--blue)}
+.toggle-switch input:checked+.toggle-slider::before{transform:translateX(22px)}
+
+/* ── MORE PAGE ── */
+.more-item{background:var(--card);margin:0 14px 2px;padding:15px 18px;
+  display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background .12s}
+.more-item:last-of-type{border-bottom:none;margin-bottom:14px}
+.more-item:hover{background:#f5f5f5}
+body.dark .more-item:hover{background:#222}
+.more-icon{width:38px;height:38px;border-radius:10px;background:#E8F1FB;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.more-label{font-size:14px;font-weight:500}
+.more-sub{font-size:11px;color:var(--text-light);margin-top:2px}
+.more-chevron{margin-left:auto;color:#bbb;font-size:16px}
+.more-divider{font-size:11px;font-weight:700;color:var(--text-light);
+  text-transform:uppercase;letter-spacing:1px;padding:16px 18px 6px}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;background:white;border-top:1px solid var(--border);
+  display:flex;padding:8px 0 12px;z-index:100;transition:background .3s}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;color:#888;font-size:10px;padding:4px 0;transition:color .15s}
+.bn-item.active{color:var(--blue)}
+.bn-icon{font-size:20px}
+body.dark .bottom-nav{background:#111}
+
+/* ── MENU DRAWER ── */
+.menu-overlay{display:none;position:fixed;inset:0;z-index:200}
+.menu-overlay.open{display:block}
+.menu-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.menu-drawer{position:absolute;top:0;left:0;bottom:0;width:85%;max-width:320px;
+  background:white;overflow-y:auto;padding-bottom:40px;transition:background .3s}
+.menu-header{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border-bottom:1px solid var(--border)}
+.menu-close{width:32px;height:32px;border:1.5px solid #888;background:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:16px;color:#555}
+.menu-item{display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px;border-bottom:1px solid #EEE;font-size:15px;color:var(--text);
+  text-decoration:none;cursor:pointer;transition:background .12s}
+.menu-item:hover{background:#f9f9f9}
+.menu-chevron{color:#999;font-size:14px}
+.menu-logout{display:block;width:calc(100% - 36px);margin:20px 18px 0;background:none;
+  border:1.5px solid var(--red);color:var(--red);padding:13px;border-radius:4px;
+  font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;text-align:center}
+
+/* ── HOLD MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:300;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:var(--card);width:100%;max-width:430px;
+  border-radius:16px 16px 0 0;padding:0 0 36px;animation:slideUp .3s ease;transition:background .3s}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-handle{width:36px;height:4px;background:#ddd;border-radius:2px;margin:12px auto 0}
+.modal-header{display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px 14px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:17px;font-weight:700}
+.modal-close{background:#f0f0f0;border:none;border-radius:50%;width:28px;height:28px;
+  font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#555}
+.modal-amount-row{display:flex;justify-content:space-between;align-items:center;
+  padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal-amount-label{font-size:13px;color:var(--text-mid)}
+.modal-amount-value{font-size:16px;font-weight:700}
+.hold-notice{margin:18px 20px 0;background:#FFF8E1;border:1.5px solid #FFD600;
+  border-left:5px solid #F9A825;border-radius:6px;padding:16px 14px}
+.hold-notice-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.hold-icon{font-size:22px}
+.hold-title{font-size:15px;font-weight:700;color:#7a5200}
+.hold-body{font-size:13.5px;color:#5a3e00;line-height:1.6}
+.hold-body strong{color:#3a2800}
+.hold-ref{margin-top:10px;font-size:11.5px;color:#888;border-top:1px solid #ffe082;padding-top:8px}
+.modal-actions{padding:18px 20px 0}
+.btn-modal-cancel{width:100%;background:#f0f0f0;color:var(--text-mid);border:none;
+  padding:13px;border-radius:6px;font-size:15px;font-weight:500;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="top-nav">
+  <button class="hamburger" onclick="openMenu()">☰</button>
+  <a class="chase-logo" href="/dashboard">
+    <span class="chase-wordmark">CHASE</span>
+    <div class="chase-octagon"><div class="chase-octagon-inner"><div class="chase-octagon-core"></div></div></div>
+  </a>
+  <form method="POST" action="/logout" style="margin:0">
+    <button type="submit" class="logout-btn">Sign out</button>
+  </form>
+</div>
+
+<!-- WELCOME BAR -->
+<div class="welcome-bar">
+  <div>
+    <div class="uname" id="welcomeName">Welcome back</div>
+    <div class="session">Secure session · Active</div>
+  </div>
+  <div class="avatar" id="welcomeAvatar">--</div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!--  PAGE: HOME                            -->
+<!-- ═══════════════════════════════════════ -->
+<div class="page active page-pad" id="page-home">
+  <div class="balance-card">
+    <div class="balance-label">Total Balance</div>
+    <div class="balance-amount"><span id="totalBalance">--</span><span class="up-badge">▲ +2.4%</span></div>
+    <div class="balance-note">All accounts · Updated just now</div>
+  </div>
+  <div class="quick-actions">
+    <div class="qa-item" onclick="showHoldModal('Transfer')"><div class="qa-circle">↕</div><div class="qa-label">Transfer</div></div>
+    <div class="qa-item" onclick="showHoldModal('Pay Bills')"><div class="qa-circle">📄</div><div class="qa-label">Pay Bills</div></div>
+    <div class="qa-item" onclick="showHoldModal('Deposit Check')"><div class="qa-circle">📷</div><div class="qa-label">Deposit Check</div></div>
+    <div class="qa-item" onclick="showHoldModal('Zelle® Send')"><div class="qa-circle">⚡</div><div class="qa-label">Zelle® Send</div></div>
+  </div>
+  <div class="section-title">My Accounts</div>
+  <div class="account-row">
+    <div class="account-row-header">Checking</div>
+    <div class="account-row-body">
+      <div><div class="account-name">Chase Total Checking®</div><div class="account-num" id="h-checkNum">--</div><div class="account-tag">✔ Active</div></div>
+      <div class="account-balance" id="h-checkBal">--</div>
+    </div>
+  </div>
+  <div class="account-row">
+    <div class="account-row-header">Savings</div>
+    <div class="account-row-body">
+      <div><div class="account-name">Chase Savings℠</div><div class="account-num" id="h-saveNum">--</div><div class="account-tag">✔ Active</div></div>
+      <div class="account-balance" id="h-saveBal">--</div>
+    </div>
+  </div>
+  <div class="section-title">Recent Transactions</div>
+  <div class="txn-card">
+    <div class="txn-card-header"><h4>Transaction History</h4><a href="#" onclick="goPage('statements');return false">View all →</a></div>
+    <div id="home-txn-list"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!--  PAGE: ACCOUNTS                        -->
+<!-- ═══════════════════════════════════════ -->
+<div class="page page-pad" id="page-accounts">
+  <div class="section-title">Account Information</div>
+  <div class="page-card">
+    <div class="page-card-header">Chase Total Checking®</div>
+    <div class="info-row"><div><div class="info-label">Account Number</div><div class="info-value" id="a-checkNum">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Routing Number</div><div class="info-value" id="a-routing">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Available Balance</div><div class="info-value" id="a-checkBal">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Account Status</div><div class="info-value" style="color:var(--green)">● Active</div></div></div>
+    <div class="info-row"><div><div class="info-label">Account Type</div><div class="info-value">Personal Checking</div></div></div>
+  </div>
+  <div class="page-card">
+    <div class="page-card-header navy">Chase Savings℠</div>
+    <div class="info-row"><div><div class="info-label">Account Number</div><div class="info-value" id="a-saveNum">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Routing Number</div><div class="info-value" id="a-saveRouting">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Available Balance</div><div class="info-value" id="a-saveBal">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Account Status</div><div class="info-value" style="color:var(--green)">● Active</div></div></div>
+    <div class="info-row"><div><div class="info-label">Interest Rate (APY)</div><div class="info-value">4.50%</div></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!--  PAGE: TRANSFER & PAY / ZELLE          -->
+<!-- ═══════════════════════════════════════ -->
+<div class="page page-pad" id="page-transfer">
+  <div class="section-title">Transfer &amp; Pay</div>
+  <div class="page-card">
+    <div class="page-card-header">Transfer Money</div>
+    <div style="padding:20px 18px;text-align:center">
+      <div style="font-size:48px;margin-bottom:14px">🔒</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:10px;color:var(--text)">Funds Currently On Hold</div>
+      <div style="font-size:14px;color:var(--text-mid);line-height:1.6">Your account funds are currently held pending a verification review and are unavailable for transfer or payment.</div>
+      <div style="margin-top:14px;font-size:12px;color:var(--text-light);padding-top:12px;border-top:1px solid var(--border)">Hold Ref #: CHK-2021-04-8821</div>
+    </div>
+  </div>
+  <div class="page-card" style="margin-top:0">
+    <div class="page-card-header navy">Pay Bills</div>
+    <div style="padding:20px 18px;text-align:center">
+      <div style="font-size:14px;color:var(--text-mid);line-height:1.6">Bill payments are temporarily unavailable while your account hold is under review.</div>
+    </div>
+  </div>
+</div>
+
+<div class="page page-pad" id="page-zelle">
+  <div class="section-title">Zelle®</div>
+  <div class="page-card">
+    <div class="page-card-header" style="background:#6D1ED4">Zelle® Send Money</div>
+    <div style="padding:24px 18px;text-align:center">
+      <div style="font-size:48px;margin-bottom:14px">🔒</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:10px;color:var(--text)">Zelle® Unavailable</div>
+      <div style="font-size:14px;color:var(--text-mid);line-height:1.6">Zelle® transfers are not available at this time. Your funds are currently on hold pending an account verification review. Please contact Chase for assistance.</div>
+      <div style="margin-top:14px;font-size:12px;color:var(--text-light);padding-top:12px;border-top:1px solid var(--border)">Hold Ref #: CHK-2021-04-8821 · Applied: Apr 6, 2021</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!--  PAGE: STATEMENTS                      -->
+<!-- ═══════════════════════════════════════ -->
+<div class="page page-pad" id="page-statements">
+  <div class="section-title">Statements &amp; Transaction History</div>
+  <div class="txn-card" style="margin-top:0">
+    <div class="txn-card-header"><h4>All Transactions</h4></div>
+    <div id="stmt-txn-list"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!--  PAGE: CREDIT CARD                     -->
+<!-- ═══════════════════════════════════════ -->
+<div class="page page-pad" id="page-credit">
+  <div class="section-title">Credit Card</div>
+
+  <!-- Card Visual -->
+  <div class="cc-visual mastercard-bg" id="ccVisual">
+    <div class="cc-shine"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+      <div style="font-size:13px;font-weight:700;letter-spacing:1px;opacity:.9" id="ccBankName">CHASE</div>
+      <div style="font-size:10px;opacity:.6;text-align:right">DEBIT</div>
+    </div>
+    <div class="cc-chip"><div class="cc-chip-inner"><div></div><div></div><div></div><div></div></div></div>
+    <div class="cc-number" id="ccNumber">•••• •••• •••• ----</div>
+    <div class="cc-bottom">
+      <div>
+        <div class="cc-label">Card Holder</div>
+        <div class="cc-val" id="ccHolder">--</div>
+      </div>
+      <div>
+        <div class="cc-label">Expires</div>
+        <div class="cc-val">12/28</div>
+      </div>
+    </div>
+    <div class="cc-network">
+      <div class="mc-circles"><div class="mc-left"></div><div class="mc-right"></div></div>
+    </div>
+  </div>
+
+  <div class="page-card">
+    <div class="page-card-header gold" id="ccCardHeader">Credit Card</div>
+    <div class="info-row"><div><div class="info-label">Card Number</div><div class="info-value" id="cc-num">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Credit Limit</div><div class="info-value" id="cc-limit">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Current Balance</div><div class="info-value" id="cc-bal">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Available Credit</div><div class="info-value" id="cc-avail">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Payment Due Date</div><div class="info-value" id="cc-due">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Minimum Payment</div><div class="info-value" id="cc-min">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Card Status</div><div class="info-value" style="color:var(--green)">● Active</div></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!--  PAGE: INVESTING                       -->
+<!-- ═══════════════════════════════════════ -->
+<div class="page page-pad" id="page-invest">
+  <div class="invest-total-card">
+    <div class="invest-total-label">Portfolio Value</div>
+    <div class="invest-total-val" id="invest-total">--</div>
+    <div class="invest-total-sub">J.P. Morgan Self-Directed · Updated just now</div>
+  </div>
+  <div class="section-title">My Holdings</div>
+  <div id="invest-list"></div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!--  PAGE: PROFILE & SETTINGS              -->
+<!-- ═══════════════════════════════════════ -->
+<div class="page page-pad" id="page-profile">
+  <div class="page-card" style="margin-top:14px">
+    <div class="profile-avatar-big" id="prof-avatar">--</div>
+    <div class="profile-name-big" id="prof-name">--</div>
+    <div class="profile-since" id="prof-since">Member since --</div>
+    <div class="info-row"><div><div class="info-label">Username</div><div class="info-value" id="prof-user">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Email Address</div><div class="info-value" id="prof-email">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Phone Number</div><div class="info-value" id="prof-phone">--</div></div></div>
+    <div class="info-row"><div><div class="info-label">Address</div><div class="info-value" id="prof-addr">--</div></div></div>
+    <div class="info-row" id="prof-cs-row" style="display:none"><div><div class="info-label">Customer Service</div><div class="info-value" id="prof-cs">--</div></div></div>
+  </div>
+
+  <div class="page-card" style="margin-top:0">
+    <div style="padding:14px 18px;font-size:14px;font-weight:700;border-bottom:1px solid var(--border)">Settings</div>
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-label">Dark Mode</div>
+        <div class="toggle-sub">Switch to dark theme</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="darkToggle" onchange="toggleDark()">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="toggle-row">
+      <div>
+        <div class="toggle-label">Push Notifications</div>
+        <div class="toggle-sub">Alerts for transactions</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="toggle-row" style="border-bottom:none">
+      <div>
+        <div class="toggle-label">Biometric Login</div>
+        <div class="toggle-sub">Face ID / Fingerprint</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!--  PAGE: MORE                            -->
+<!-- ═══════════════════════════════════════ -->
+<div class="page page-pad" id="page-more">
+  <div class="section-title">More</div>
+
+  <div class="more-divider">Account Services</div>
+  <div class="more-item" onclick="goPage('accounts')">
+    <div class="more-icon">🏦</div>
+    <div><div class="more-label">Account Information</div><div class="more-sub">View account details &amp; numbers</div></div>
+    <div class="more-chevron">›</div>
+  </div>
+  <div class="more-item" onclick="goPage('statements')">
+    <div class="more-icon">📋</div>
+    <div><div class="more-label">Statements</div><div class="more-sub">Transaction history &amp; statements</div></div>
+    <div class="more-chevron">›</div>
+  </div>
+  <div class="more-item" onclick="goPage('invest')">
+    <div class="more-icon">📈</div>
+    <div><div class="more-label">Investing</div><div class="more-sub">J.P. Morgan portfolio</div></div>
+    <div class="more-chevron">›</div>
+  </div>
+
+  <div class="more-divider">Payments</div>
+  <div class="more-item" onclick="goPage('transfer')">
+    <div class="more-icon">↕️</div>
+    <div><div class="more-label">Transfer &amp; Pay</div><div class="more-sub">Move money between accounts</div></div>
+    <div class="more-chevron">›</div>
+  </div>
+  <div class="more-item" onclick="goPage('zelle')">
+    <div class="more-icon">⚡</div>
+    <div><div class="more-label">Zelle®</div><div class="more-sub">Send &amp; receive money fast</div></div>
+    <div class="more-chevron">›</div>
+  </div>
+
+  <div class="more-divider">Account Details</div>
+  <div class="more-item" onclick="goPage('profile')">
+    <div class="more-icon">👤</div>
+    <div><div class="more-label">Profile &amp; Settings</div><div class="more-sub">Personal info &amp; preferences</div></div>
+    <div class="more-chevron">›</div>
+  </div>
+  <div class="more-item">
+    <div class="more-icon">🔒</div>
+    <div><div class="more-label">Security Center</div><div class="more-sub">Manage security &amp; alerts</div></div>
+    <div class="more-chevron">›</div>
+  </div>
+  <div class="more-item" id="help-support-item" onclick="openHelpModal()">
+    <div class="more-icon">❓</div>
+    <div><div class="more-label">Help &amp; Support</div><div class="more-sub" id="help-sub">FAQs &amp; contact Chase</div></div>
+    <div class="more-chevron">›</div>
+  </div>
+</div>
+
+<!-- HELP & SUPPORT MODAL -->
+<div class="modal-overlay" id="helpModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title">Help &amp; Support</span>
+      <button class="modal-close" onclick="closeHelpModal()">✕</button>
+    </div>
+    <div style="padding:20px 20px 0">
+      <div style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg);border-radius:10px;margin-bottom:14px">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📞</div>
+        <div>
+          <div style="font-size:12px;color:var(--text-light);margin-bottom:3px">Customer Service</div>
+          <div style="font-size:18px;font-weight:700;color:var(--text)" id="help-cs-number">1-800-935-9935</div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:2px">Available 24/7</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg);border-radius:10px;margin-bottom:14px">
+        <div style="width:44px;height:44px;border-radius:50%;background:#e6f5ec;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">💬</div>
+        <div>
+          <div style="font-size:12px;color:var(--text-light);margin-bottom:3px">Live Chat</div>
+          <div style="font-size:15px;font-weight:600;color:var(--text)">Chat with an agent</div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:2px">Mon–Fri, 8AM–10PM ET</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg);border-radius:10px;margin-bottom:20px">
+        <div style="width:44px;height:44px;border-radius:50%;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🏦</div>
+        <div>
+          <div style="font-size:12px;color:var(--text-light);margin-bottom:3px">Find a Branch</div>
+          <div style="font-size:15px;font-weight:600;color:var(--text)">Locate nearest Chase</div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:2px">14,000+ ATMs nationwide</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0 20px">
+      <button class="btn-modal-cancel" onclick="closeHelpModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ BOTTOM NAV ═══════ -->
+<div class="bottom-nav">
+  <div class="bn-item active" id="bn-home" onclick="goPage('home')"><div class="bn-icon">🏠</div><span>Home</span></div>
+  <div class="bn-item" id="bn-accounts" onclick="goPage('accounts')"><div class="bn-icon">💳</div><span>Accounts</span></div>
+  <div class="bn-item" id="bn-transfer" onclick="goPage('transfer')"><div class="bn-icon">↕</div><span>Transfer</span></div>
+  <div class="bn-item" id="bn-zelle" onclick="goPage('zelle')"><div class="bn-icon">⚡</div><span>Zelle®</span></div>
+  <div class="bn-item" id="bn-more" onclick="goPage('more')"><div class="bn-icon">⋯</div><span>More</span></div>
+</div>
+
+<!-- ═══════ SLIDE-IN MENU ═══════ -->
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-backdrop" onclick="closeMenu()"></div>
+  <div class="menu-drawer">
+    <div class="menu-header">
+      <div class="chase-logo">
+        <span style="font-size:20px;font-weight:700;letter-spacing:.5px">CHASE</span>
+        <div class="chase-octagon" style="width:22px;height:22px"><div class="chase-octagon-inner" style="width:12px;height:12px"><div class="chase-octagon-core" style="width:7px;height:7px"></div></div></div>
+      </div>
+      <button class="menu-close" onclick="closeMenu()">✕</button>
+    </div>
+    <a class="menu-item" href="#" onclick="goPage('home');closeMenu();return false">Dashboard <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#" onclick="goPage('accounts');closeMenu();return false">Accounts <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#" onclick="goPage('transfer');closeMenu();return false">Transfer &amp; Pay <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#" onclick="goPage('zelle');closeMenu();return false">Zelle® <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#" onclick="goPage('statements');closeMenu();return false">Statements <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#" onclick="goPage('credit');closeMenu();return false">Credit Cards <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#" onclick="goPage('invest');closeMenu();return false">Investing <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#" onclick="goPage('profile');closeMenu();return false">Profile &amp; Settings <span class="menu-chevron">›</span></a>
+    <form method="POST" action="/logout" style="margin:0">
+      <button type="submit" class="menu-logout">Sign out</button>
+    </form>
+  </div>
+</div>
+
+<!-- ═══════ HOLD MODAL ═══════ -->
+<div class="modal-overlay" id="holdModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="holdModalTitle">Transfer</span>
+      <button class="modal-close" onclick="closeHoldModal()">✕</button>
+    </div>
+    <div class="modal-amount-row">
+      <span class="modal-amount-label">Account Balance</span>
+      <span class="modal-amount-value" id="holdModalBal">--</span>
+    </div>
+    <div class="hold-notice">
+      <div class="hold-notice-top"><span class="hold-icon">🔒</span><span class="hold-title">Funds Currently On Hold</span></div>
+      <div class="hold-body">The funds in this account are currently <strong>held and unavailable</strong> for withdrawal, transfer, or payment at this time.<br><br>This hold has been placed on your account pending a verification review. You will not be able to access these funds until the hold is released by a Chase representative.</div>
+      <div class="hold-ref">Hold Reference #: CHK-2021-04-8821 &nbsp;·&nbsp; Applied: Apr 6, 2021</div>
+    </div>
+    <div class="modal-actions"><button class="btn-modal-cancel" onclick="closeHoldModal()">Dismiss</button></div>
+  </div>
+</div>
+
+<script>
+// ── Helpers ──
+function fmt(n){return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+
+let userData = null;
+
+// ── Load user data ──
+fetch('/api/me')
+  .then(r=>{if(!r.ok)location.href='/login';return r.json()})
+  .then(u=>{
+    userData = u;
+
+    // Welcome bar
+    document.getElementById('welcomeName').textContent='Welcome back, '+u.name;
+    document.getElementById('welcomeAvatar').textContent=u.initials;
+
+    // ── HOME PAGE ──
+    document.getElementById('totalBalance').textContent=fmt(u.total);
+    document.getElementById('holdModalBal').textContent=fmt(u.total);
+    document.getElementById('h-checkNum').textContent='••••  ••••  '+u.checking.number;
+    document.getElementById('h-checkBal').textContent=fmt(u.checking.balance);
+    document.getElementById('h-saveNum').textContent='••••  ••••  '+u.savings.number;
+    document.getElementById('h-saveBal').textContent=fmt(u.savings.balance);
+    renderTxnList('home-txn-list', u.transactions.slice(0,4));
+
+    // ── ACCOUNTS PAGE ──
+    document.getElementById('a-checkNum').textContent='••••••'+u.checking.number;
+    document.getElementById('a-routing').textContent=u.checking.routing;
+    document.getElementById('a-checkBal').textContent=fmt(u.checking.balance);
+    document.getElementById('a-saveNum').textContent='••••••'+u.savings.number;
+    document.getElementById('a-saveRouting').textContent=u.savings.routing;
+    document.getElementById('a-saveBal').textContent=fmt(u.savings.balance);
+
+    // ── STATEMENTS ──
+    renderTxnList('stmt-txn-list', u.transactions);
+
+    // ── CREDIT CARD ──
+    document.getElementById('ccNumber').textContent='•••• •••• •••• '+u.creditCard.last4;
+    document.getElementById('ccHolder').textContent=u.name.toUpperCase();
+    document.getElementById('ccCardHeader').textContent=u.creditCard.type;
+    document.getElementById('cc-num').textContent='•••• •••• •••• '+u.creditCard.last4;
+    document.getElementById('cc-limit').textContent=fmt(u.creditCard.limit);
+    document.getElementById('cc-bal').textContent=fmt(u.creditCard.balance);
+    document.getElementById('cc-avail').textContent=fmt(u.creditCard.available);
+    document.getElementById('cc-due').textContent=u.creditCard.dueDate;
+    document.getElementById('cc-min').textContent=fmt(u.creditCard.minPayment);
+
+    // ── INVESTING ──
+    let portfolioTotal=u.investments.reduce((s,i)=>s+i.value,0);
+    document.getElementById('invest-total').textContent=fmt(portfolioTotal);
+    const iList=document.getElementById('invest-list');
+    u.investments.forEach(inv=>{
+      const up=inv.change>=0;
+      iList.innerHTML+=`
+        <div class="invest-row">
+          <div class="invest-ticker">${inv.ticker}</div>
+          <div class="invest-info">
+            <div class="invest-name">${inv.name}</div>
+            <div class="invest-shares">${inv.shares} shares · $${inv.price.toFixed(2)}/share</div>
+          </div>
+          <div class="invest-right">
+            <div class="invest-value">${fmt(inv.value)}</div>
+            <div class="invest-change ${up?'up':'dn'}">${up?'▲':'▼'} ${Math.abs(inv.change).toFixed(2)} (${Math.abs(inv.pct).toFixed(2)}%)</div>
+          </div>
+        </div>`;
+    });
+
+    // ── PROFILE ──
+    document.getElementById('prof-avatar').textContent=u.initials;
+    document.getElementById('prof-name').textContent=u.name;
+    document.getElementById('prof-since').textContent='Member since '+u.memberSince;
+    document.getElementById('prof-user').textContent=u.username;
+    document.getElementById('prof-email').textContent=u.email;
+    document.getElementById('prof-phone').textContent=u.phone;
+    document.getElementById('prof-addr').textContent=u.address;
+    if(u.customerService){
+      document.getElementById('prof-cs-row').style.display='flex';
+      document.getElementById('prof-cs').textContent=u.customerService;
+      document.getElementById('help-cs-number').textContent=u.customerService;
+      document.getElementById('help-sub').textContent=u.customerService+' · FAQs & contact Chase';
+    }
+  })
+  .catch(()=>location.href='/login');
+
+// ── Render transaction rows ──
+function renderTxnList(elId, txns){
+  const el=document.getElementById(elId);
+  el.innerHTML='';
+  txns.forEach(t=>{
+    el.innerHTML+=`
+      <div class="txn-row">
+        <div class="txn-dot ${t.icon}">${t.emoji}</div>
+        <div class="txn-info">
+          <div class="tname">${t.name}</div>
+          <div class="tdate">${t.date} · ${t.detail}</div>
+        </div>
+        <div class="txn-right">
+          <div class="amount ${t.pos?'pos':'neg'}">${t.amount}</div>
+          <div class="status done">${t.status}</div>
+        </div>
+      </div>`;
+  });
+}
+
+// ── Page navigation ──
+const pages=['home','accounts','transfer','zelle','statements','credit','invest','profile','more'];
+const bnMap={home:'bn-home',accounts:'bn-accounts',transfer:'bn-transfer',zelle:'bn-zelle',more:'bn-more'};
+
+function goPage(name){
+  pages.forEach(p=>{
+    document.getElementById('page-'+p).classList.toggle('active',p===name);
+  });
+  // Update bottom nav active state
+  Object.keys(bnMap).forEach(k=>{
+    document.getElementById(bnMap[k]).classList.toggle('active',k===name);
+  });
+  window.scrollTo(0,0);
+}
+
+// ── Menu ──
+function openMenu(){document.getElementById('menuOverlay').classList.add('open')}
+function closeMenu(){document.getElementById('menuOverlay').classList.remove('open')}
+
+// ── Hold modal ──
+function showHoldModal(action){
+  document.getElementById('holdModalTitle').textContent=action;
+  document.getElementById('holdModal').classList.add('open');
+}
+function closeHoldModal(){document.getElementById('holdModal').classList.remove('open')}
+document.getElementById('holdModal').addEventListener('click',function(e){if(e.target===this)closeHoldModal()});
+
+// ── Help modal ──
+function openHelpModal(){document.getElementById('helpModal').classList.add('open')}
+function closeHelpModal(){document.getElementById('helpModal').classList.remove('open')}
+document.getElementById('helpModal').addEventListener('click',function(e){if(e.target===this)closeHelpModal()})
+
+// ── Dark mode ──
+function toggleDark(){
+  document.body.classList.toggle('dark',document.getElementById('darkToggle').checked);
+  localStorage.setItem('darkMode',document.getElementById('darkToggle').checked?'1':'0');
+}
+// Restore dark mode preference
+if(localStorage.getItem('darkMode')==='1'){
+  document.body.classList.add('dark');
+  document.addEventListener('DOMContentLoaded',()=>{
+    const t=document.getElementById('darkToggle');
+    if(t)t.checked=true;
+  });
+}
+</script>
+</body>
+</html>
