@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Chase.com – Personal Banking</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #0066CC;
+    --blue-dark: #0050A0;
+    --green: #2A7D2E;
+    --navy: #1B2A4A;
+    --text: #111111;
+    --text-mid: #444444;
+    --text-light: #666666;
+    --border: #DDDDDD;
+    --bg: #F5F5F5;
+    --white: #FFFFFF;
+    --link: #0066CC;
+  }
+
+  body {
+    font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text);
+    background: white;
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  /* ── TOP NAV ── */
+  .top-nav {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .hamburger { font-size: 22px; color: #333; cursor: pointer; padding: 4px; background: none; border: none; }
+  .chase-logo { display: flex; align-items: center; gap: 6px; text-decoration: none; }
+  .chase-wordmark { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: 0.5px; }
+  .chase-octagon {
+    width: 26px; height: 26px;
+    background: var(--blue);
+    clip-path: polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .chase-octagon-inner {
+    width: 14px; height: 14px;
+    background: white;
+    clip-path: polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .chase-octagon-core {
+    width: 8px; height: 8px;
+    background: var(--blue);
+    clip-path: polygon(29% 0%,71% 0%,100% 29%,100% 71%,71% 100%,29% 100%,0% 71%,0% 29%);
+  }
+  .btn-signin {
+    background: var(--blue);
+    color: white;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-signin:hover { background: var(--blue-dark); }
+
+  /* ── HERO BANNER ── */
+  .hero-banner {
+    background: var(--blue);
+    color: white;
+    padding: 28px 20px 32px;
+  }
+  .hero-enjoy { font-size: 14px; font-weight: 400; margin-bottom: 2px; opacity: 0.92; }
+  .hero-amount { font-size: 52px; font-weight: 700; line-height: 1.0; margin-bottom: 24px; }
+  .hero-headline { font-size: 22px; font-weight: 700; line-height: 1.25; margin-bottom: 10px; }
+  .hero-sub { font-size: 15px; line-height: 1.5; font-weight: 400; margin-bottom: 22px; opacity: 0.95; }
+  .btn-open-account {
+    background: var(--green);
+    color: white;
+    border: none;
+    padding: 13px 22px;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  /* ── CHOOSE SECTION ── */
+  .choose-section { background: white; padding: 28px 20px 8px; }
+  .choose-section h2 { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 24px; line-height: 1.2; }
+  .choose-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .choose-item {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 16px 8px 24px; cursor: pointer; text-decoration: none;
+  }
+  .choose-icon { width: 48px; height: 48px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; }
+  .choose-icon svg { width: 40px; height: 40px; stroke: #333; fill: none; stroke-width: 1.5; }
+  .choose-label { color: var(--link); font-size: 15px; font-weight: 400; text-align: center; }
+
+  /* ── PROMO CARDS ── */
+  .promo-section { background: white; padding: 8px 0 0; }
+  .promo-card { border: 1px solid var(--border); margin: 12px 16px; border-radius: 4px; overflow: hidden; }
+  .promo-header {
+    background: var(--blue); color: white; padding: 16px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .promo-header.navy { background: var(--navy); }
+  .promo-header h3 { font-size: 18px; font-weight: 700; line-height: 1.2; }
+  .promo-header-icon { font-size: 28px; opacity: 0.9; }
+  .promo-body { background: white; padding: 18px; }
+  .promo-body h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+  .promo-body p { font-size: 14px; color: var(--text-mid); line-height: 1.5; margin-bottom: 14px; }
+  .btn-promo-blue {
+    background: var(--blue); color: white; border: none; padding: 12px 22px;
+    border-radius: 4px; font-size: 15px; font-weight: 400; cursor: pointer;
+    font-family: inherit; display: inline-block; min-width: 140px; text-align: center;
+  }
+  .btn-promo-green {
+    background: var(--green); color: white; border: none; padding: 12px 22px;
+    border-radius: 4px; font-size: 15px; font-weight: 400; cursor: pointer;
+    font-family: inherit; display: inline-block; min-width: 140px; text-align: center;
+  }
+
+  /* ── INVEST CARD ── */
+  .invest-card { margin: 12px 16px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .invest-img { background: #F0F0F0; padding: 28px 18px 0; text-align: center; }
+  .invest-amount-label { font-size: 14px; color: #444; margin-bottom: 2px; }
+  .invest-amount { font-size: 42px; font-weight: 700; color: #222; line-height: 1; }
+  .invest-amount-sub { font-size: 16px; color: #444; padding-bottom: 16px; }
+  .invest-tan-strip { height: 10px; background: #C8A882; }
+  .invest-body { background: white; padding: 18px; }
+  .invest-body h4 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .invest-body p { font-size: 14px; color: var(--text-mid); line-height: 1.5; margin-bottom: 14px; }
+
+  /* ── AUTO SECTION ── */
+  .auto-section {
+    background: white; padding: 24px 18px; text-align: center;
+    border-top: 1px solid var(--border);
+  }
+  .auto-section h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; line-height: 1.25; }
+  .auto-section p { font-size: 15px; color: var(--text-mid); margin-bottom: 18px; line-height: 1.5; }
+
+  /* ── FOOTER ── */
+  .divider { height: 8px; background: #e8e8e8; }
+  .footer-text { background: white; padding: 24px 18px 0; border-top: 8px solid var(--bg); }
+  .chase-logo-footer { display: flex; align-items: center; gap: 6px; margin-bottom: 24px; }
+  .footer-section { margin-bottom: 22px; }
+  .footer-section h4 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .footer-divider { width: 40px; height: 2px; background: var(--border); margin-bottom: 10px; }
+  .footer-section p { font-size: 14px; color: var(--text-mid); line-height: 1.6; }
+  .footer-section a { color: var(--link); text-decoration: underline; }
+  .footer-links { background: white; padding: 20px 18px; border-top: 1px solid var(--border); }
+  .footer-links-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px 8px; margin-bottom: 16px; }
+  .footer-links-grid a { color: var(--text); text-decoration: underline; font-size: 13px; }
+  .footer-social { display: flex; gap: 18px; margin-bottom: 16px; font-size: 20px; color: #555; }
+  .footer-legal { font-size: 11.5px; color: #888; line-height: 1.6; }
+  .footer-fdic { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--text-mid); margin-bottom: 8px; }
+  .copyright { font-size: 13px; color: var(--text-mid); font-weight: 500; margin-top: 12px; }
+
+  /* ── MENU DRAWER ── */
+  .menu-overlay { display: none; position: fixed; inset: 0; z-index: 200; }
+  .menu-overlay.open { display: block; }
+  .menu-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.45); }
+  .menu-drawer {
+    position: absolute; top: 0; left: 0; bottom: 0;
+    width: 85%; max-width: 340px;
+    background: white; overflow-y: auto; padding-bottom: 40px;
+  }
+  .menu-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+  }
+  .menu-close {
+    width: 32px; height: 32px; border: 1.5px solid #888;
+    background: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: #555;
+  }
+  .menu-search {
+    margin: 14px 16px; border: 1.5px solid #999; border-radius: 4px;
+    padding: 11px 14px; display: flex; align-items: center; gap: 10px;
+    font-size: 15px; color: #888;
+  }
+  .menu-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px; border-bottom: 1px solid #EEEEEE;
+    font-size: 16px; color: var(--text); cursor: pointer; text-decoration: none;
+  }
+  .menu-item:hover { background: #f9f9f9; }
+  .menu-chevron { color: #999; font-size: 14px; }
+  .menu-section-label {
+    padding: 16px 18px 8px; font-size: 15px; font-weight: 700;
+    color: var(--text); border-bottom: 1.5px solid #ccc;
+  }
+  .menu-item-plain {
+    display: block; padding: 16px 18px; border-bottom: 1px solid #EEEEEE;
+    font-size: 16px; color: var(--text); cursor: pointer; text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="top-nav">
+  <button class="hamburger" onclick="openMenu()">☰</button>
+  <a class="chase-logo" href="/">
+    <span class="chase-wordmark">CHASE</span>
+    <div class="chase-octagon"><div class="chase-octagon-inner"><div class="chase-octagon-core"></div></div></div>
+  </a>
+  <a class="btn-signin" href="/login">Sign in</a>
+</div>
+
+<!-- HERO BANNER -->
+<div class="hero-banner">
+  <div class="hero-enjoy">Enjoy</div>
+  <div class="hero-amount">$400</div>
+  <div class="hero-headline">New Chase checking customers</div>
+  <div class="hero-sub">Open a Chase Total Checking® account with qualifying activities.</div>
+  <button class="btn-open-account">Open an account</button>
+</div>
+
+<!-- CHOOSE WHAT'S RIGHT -->
+<div class="choose-section">
+  <h2>Choose what's right for you</h2>
+  <div class="choose-grid">
+    <a class="choose-item" href="#"><div class="choose-icon"><svg viewBox="0 0 40 40"><rect x="6" y="10" width="28" height="20" rx="2"/><rect x="10" y="15" width="8" height="5" rx="1"/><line x1="6" y1="20" x2="34" y2="20"/></svg></div><span class="choose-label">Business</span></a>
+    <a class="choose-item" href="#"><div class="choose-icon"><svg viewBox="0 0 40 40"><rect x="4" y="10" width="32" height="22" rx="3"/><line x1="4" y1="17" x2="36" y2="17" stroke-width="2.5"/><rect x="8" y="22" width="8" height="4" rx="1"/></svg></div><span class="choose-label">Credit cards</span></a>
+    <a class="choose-item" href="#"><div class="choose-icon"><svg viewBox="0 0 40 40"><rect x="4" y="12" width="32" height="20" rx="2"/><line x1="4" y1="18" x2="36" y2="18" stroke-width="2.5"/><line x1="8" y1="24" x2="16" y2="24"/><line x1="8" y1="27" x2="20" y2="27"/></svg></div><span class="choose-label">Checking</span></a>
+    <a class="choose-item" href="#"><div class="choose-icon"><svg viewBox="0 0 40 40"><path d="M6 34 C10 24 14 18 20 18 C26 18 30 24 34 34"/><path d="M12 28 C14 22 16 18 20 18 C24 18 26 22 28 28"/><line x1="20" y1="18" x2="20" y2="14"/><line x1="6" y1="34" x2="34" y2="34"/></svg></div><span class="choose-label">Travel</span></a>
+    <a class="choose-item" href="#"><div class="choose-icon"><svg viewBox="0 0 40 40"><ellipse cx="20" cy="22" rx="10" ry="12"/><path d="M12 18 C12 10 28 10 28 18"/><path d="M20 10 C20 6 14 6 14 10"/></svg></div><span class="choose-label">Savings</span></a>
+    <a class="choose-item" href="#"><div class="choose-icon"><svg viewBox="0 0 40 40"><path d="M6 32 L6 20 L20 10 L34 20 L34 32 Z"/><rect x="15" y="22" width="10" height="10"/></svg></div><span class="choose-label">Home loans</span></a>
+    <a class="choose-item" href="#"><div class="choose-icon"><svg viewBox="0 0 40 40"><ellipse cx="20" cy="24" rx="16" ry="8"/><ellipse cx="28" cy="26" rx="4" ry="4" fill="white" stroke="#333"/><ellipse cx="12" cy="26" rx="4" ry="4" fill="white" stroke="#333"/><path d="M8 24 L8 20 Q10 14 20 14 Q30 14 32 20 L32 24"/></svg></div><span class="choose-label">Auto</span></a>
+    <a class="choose-item" href="#"><div class="choose-icon"><svg viewBox="0 0 40 40"><rect x="4" y="8" width="32" height="24" rx="3"/><polyline points="10,26 16,18 22,22 28,14 34,18" stroke-width="2"/></svg></div><span class="choose-label">Investments</span></a>
+    <a class="choose-item" href="#"><div class="choose-icon"><svg viewBox="0 0 40 40"><rect x="4" y="6" width="24" height="18" rx="2"/><rect x="12" y="16" width="24" height="18" rx="2" fill="white"/></svg></div><span class="choose-label">Commercial</span></a>
+    <a class="choose-item" href="#"><div class="choose-icon"><svg viewBox="0 0 40 40"><circle cx="14" cy="20" r="7"/><circle cx="26" cy="20" r="7"/><path d="M19 14 Q26 8 30 14"/></svg></div><span class="choose-label">Schedule a meeting</span></a>
+    <a class="choose-item" href="#"><div class="choose-icon"><svg viewBox="0 0 40 40"><path d="M6 28 Q6 10 20 10 Q34 10 34 20" fill="none"/><circle cx="20" cy="22" r="2" fill="#333" stroke="none"/><path d="M8 30 L32 30"/></svg></div><span class="choose-label">Free credit score</span></a>
+  </div>
+</div>
+
+<!-- PROMO CARDS -->
+<div class="promo-section">
+  <div class="promo-card">
+    <div class="promo-header"><h3>Chase Credit Cards</h3><span class="promo-header-icon">🗂️</span></div>
+    <div class="promo-body">
+      <h4>See if you're preapproved</h4>
+      <p>Learn which Chase Credit Cards you're preapproved for in just a few moments. Plus, there's no impact to your credit score.</p>
+      <button class="btn-promo-blue">Get started</button>
+    </div>
+  </div>
+
+  <div class="promo-card">
+    <div class="promo-header"><h3>Home Lending</h3><span class="promo-header-icon">🏠</span></div>
+    <div class="promo-body">
+      <h4>A lower mortgage rate could save you money</h4>
+      <p>Mortgage rates have dropped, so now could be a good time to refinance. Explore options without impacting your credit score.</p>
+      <button class="btn-promo-blue">Check rates</button>
+    </div>
+  </div>
+
+  <div class="promo-card">
+    <div class="promo-header navy"><h3>Chase Sapphire Preferred®</h3><span class="promo-header-icon">🗂️</span></div>
+    <div class="promo-body">
+      <h4>Earn <strong>75,000</strong> bonus points</h4>
+      <p>Plus, earn 5x total points on Chase Travel℠, 3x on dining, 2x on all other travel purchases, and more. Terms apply.</p>
+      <button class="btn-promo-blue">See details</button>
+    </div>
+  </div>
+
+  <div class="invest-card">
+    <div class="invest-img">
+      <div class="invest-amount-label">Earn up to</div>
+      <div class="invest-amount">$1,000</div>
+      <div class="invest-amount-sub">cash bonus</div>
+    </div>
+    <div class="invest-tan-strip"></div>
+    <div class="invest-body">
+      <h4>Commission-free online trades – plus a bonus</h4>
+      <p>Get up to $1,000 when you open and fund a J.P. Morgan Self-Directed Investing account.</p>
+      <button class="btn-promo-green">Continue</button>
+    </div>
+  </div>
+
+  <div class="promo-card">
+    <div class="promo-header navy" style="flex-direction:column;align-items:flex-start;padding:0;">
+      <div style="background:var(--navy);width:100%;padding:12px 16px;">
+        <div style="color:rgba(255,255,255,0.8);font-size:14px;margin-bottom:2px;">Earn up to</div>
+        <div style="font-size:46px;font-weight:700;color:white;line-height:1;">$500</div>
+      </div>
+      <div style="height:6px;width:100%;background:var(--blue);"></div>
+    </div>
+    <div class="promo-body">
+      <h4>Keep your business moving forward with Chase</h4>
+      <p>Open a new Chase Business Complete Checking® account with qualifying activities. For new business checking customers only.</p>
+      <button class="btn-promo-green">Open account</button>
+    </div>
+  </div>
+</div>
+
+<!-- AUTO SECTION -->
+<div class="auto-section">
+  <div style="font-size:72px;margin-bottom:16px;line-height:1;">🚗</div>
+  <h3>Get prequalified in seconds with Chase Auto</h3>
+  <p>Learn how much you can borrow with no impact on your credit score.</p>
+  <button class="btn-promo-green">Get prequalified</button>
+</div>
+
+<!-- FOOTER TEXT -->
+<div class="divider"></div>
+<div class="footer-text">
+  <div class="chase-logo-footer">
+    <span style="font-size:20px;font-weight:700;letter-spacing:.5px;">CHASE</span>
+    <div class="chase-octagon" style="width:22px;height:22px;"><div class="chase-octagon-inner" style="width:12px;height:12px;"><div class="chase-octagon-core" style="width:7px;height:7px;"></div></div></div>
+  </div>
+  <div class="footer-section"><h4>Checking Accounts</h4><div class="footer-divider"></div><p>Choose the <a href="#">checking account</a> that works best for you. See our <a href="#">Chase Total Checking®</a> offer for new customers. Bank from almost anywhere with 14,000 ATMs and 5,000 branches.</p></div>
+  <div class="footer-section"><h4>Savings Accounts &amp; CDs</h4><div class="footer-divider"></div><p>It's never too early to begin saving. <a href="#">Open a savings account</a> or open a Certificate of Deposit (<a href="#">see interest rates</a>) and start saving your money.</p></div>
+  <div class="footer-section"><h4>Credit Cards</h4><div class="footer-divider"></div><p>Chase <a href="#">credit cards</a> offer rewards redeemable for <a href="#">cash back</a> or <a href="#">travel-related</a> perks. With Credit Journey you can get a <a href="#">free credit score</a>!</p></div>
+  <div class="footer-section"><h4>Mortgages</h4><div class="footer-divider"></div><p>Apply for a <a href="#">mortgage</a> or <a href="#">refinance your mortgage</a> with Chase. View today's <a href="#">mortgage rates</a> or use our <a href="#">mortgage calculator</a>.</p></div>
+  <div class="footer-section"><h4>Auto</h4><div class="footer-divider"></div><p><a href="#">Chase Auto</a> helps you get the right car. Apply for <a href="#">auto financing</a> for a new or used car and use the <a href="#">payment calculator</a> to estimate monthly payments.</p></div>
+  <div class="footer-section"><h4>Chase for Business</h4><div class="footer-divider"></div><p>Choose from <a href="#">business checking</a>, <a href="#">small business loans</a>, <a href="#">business credit cards</a>, and <a href="#">merchant services</a>.</p></div>
+  <div class="footer-section"><h4>Chase Security Center</h4><div class="footer-divider"></div><p>Our <a href="#">suite of security features</a> helps protect your info and money. <a href="#">Report fraud</a> immediately if you see unauthorized charges.</p></div>
+  <div class="footer-section">
+    <h4>Investing by J.P. Morgan</h4><div class="footer-divider"></div>
+    <p><a href="#">Invest on your own</a> or <a href="#">work with an advisor</a>.</p>
+    <p style="margin-top:10px;font-weight:700;font-size:13px;">INVESTMENT AND INSURANCE PRODUCTS ARE:</p>
+    <ul style="margin-left:18px;margin-top:8px;font-size:13px;font-weight:700;line-height:2;color:#111;">
+      <li>NOT FDIC INSURED</li>
+      <li>NOT INSURED BY ANY FEDERAL GOVERNMENT AGENCY</li>
+      <li>NOT A DEPOSIT OR GUARANTEED BY JPMORGAN CHASE BANK, N.A.</li>
+      <li>SUBJECT TO INVESTMENT RISKS, INCLUDING POSSIBLE LOSS OF PRINCIPAL</li>
+    </ul>
+  </div>
+  <div class="footer-section"><h4>Other Products &amp; Services:</h4><div class="footer-divider"></div><p style="line-height:2.2;"><a href="#">Mobile Banking</a><br><a href="#">Online Banking</a><br><a href="#">Student Center</a><br><a href="#">Zelle®</a></p></div>
+</div>
+
+<div class="footer-links">
+  <div class="footer-social"><span>𝕗</span><span>📷</span><span>𝕏</span><span>▶</span><span>in</span></div>
+  <div class="footer-links-grid">
+    <a href="#">J.P. Morgan</a><a href="#">JPMorganChase</a><a href="#">Media Center</a>
+    <a href="#">Careers</a><a href="#">Site Map</a><a href="#">Privacy</a>
+    <a href="#">Security</a><a href="#">Terms of Use</a><a href="#">Accessibility</a>
+    <a href="#">AdChoices</a><a href="#">Give feedback</a>
+  </div>
+  <div class="footer-fdic"><span>🏠</span><span>Member FDIC · Equal Housing Opportunity</span></div>
+  <div class="footer-legal">"Chase," "JPMorgan," "JPMorgan Chase," the JPMorgan Chase logo and the Octagon Symbol are trademarks of JPMorgan Chase Bank, N.A.</div>
+  <div class="copyright">© 2026 JPMorgan Chase &amp; Co.</div>
+</div>
+
+<!-- SLIDE-IN MENU -->
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-backdrop" onclick="closeMenu()"></div>
+  <div class="menu-drawer">
+    <div class="menu-header">
+      <div class="chase-logo">
+        <span style="font-size:20px;font-weight:700;letter-spacing:.5px;">CHASE</span>
+        <div class="chase-octagon" style="width:22px;height:22px;"><div class="chase-octagon-inner" style="width:12px;height:12px;"><div class="chase-octagon-core" style="width:7px;height:7px;"></div></div></div>
+      </div>
+      <button class="menu-close" onclick="closeMenu()">✕</button>
+    </div>
+    <div class="menu-search"><span>🔍</span> Search</div>
+    <a class="menu-item" href="#">Checking <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#">Savings &amp; CDs <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#">Credit cards <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#">Home loans <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#">Auto <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#">Investing by J.P. Morgan <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#">Education &amp; goals <span class="menu-chevron">›</span></a>
+    <a class="menu-item" href="#">Travel <span class="menu-chevron">›</span></a>
+    <div class="menu-section-label">Connect with us</div>
+    <a class="menu-item-plain" href="#">Schedule a meeting</a>
+    <a class="menu-item" href="#">Customer service <span class="menu-chevron">›</span></a>
+    <div class="menu-section-label">Other products</div>
+    <a class="menu-item-plain" href="#">Business</a>
+    <a class="menu-item-plain" href="#">Commercial</a>
+    <a class="menu-item-plain" href="#">Español</a>
+  </div>
+</div>
+
+<script>
+  function openMenu() { document.getElementById('menuOverlay').classList.add('open'); }
+  function closeMenu() { document.getElementById('menuOverlay').classList.remove('open'); }
+</script>
+</body>
+</html>
